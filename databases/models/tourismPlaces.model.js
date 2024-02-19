@@ -1,0 +1,41 @@
+import mongoose from "mongoose";
+
+const schema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      unique: true,
+      trim: true,
+      required: true,
+      minlength: [2, "too short governrate name"],
+      maxlength: [20, "too long governrate name"],
+    },
+    slug: {
+      type: String,
+      lowercase: true,
+      required: true,
+    },
+    governrate: {
+      type: mongoose.Types.ObjectId,
+      ref: "governrate",
+    },
+    imgCover: String,
+    images: [
+      {
+        type: String,
+      },
+    ],
+  },
+  { timestamps: true }
+);
+schema.post("init", (doc) => {
+  if (doc.imgCover || doc.images) {
+    doc.imgCover = process.env.BASE_URL + doc.imgCover;
+    doc.images = doc.images?.map((val) => process.env.BASE_URL + val);
+  }
+});
+
+schema.pre(/^find/, function () {
+  this.populate("governrate");
+});
+export const tourismPlaceModel = mongoose.model("tourismPlace", schema);

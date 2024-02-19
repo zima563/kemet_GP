@@ -1,0 +1,26 @@
+import mongoose from "mongoose";
+
+const schema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      unique: true,
+      trim: true,
+      required: true,
+      minlength: [2, "too short governrate name"],
+      maxlength: [20, "too long governrate name"],
+    },
+    slug: {
+      type: String,
+      lowercase: true,
+      required: true,
+    },
+    image: String,
+  },
+  { timestamps: true }
+);
+
+schema.post("init", (doc) => {
+  if (doc.image) doc.image = process.env.BASE_URL + doc.image;
+});
+export const governrateModel = mongoose.model("governrate", schema);
