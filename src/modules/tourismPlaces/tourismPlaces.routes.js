@@ -14,6 +14,7 @@ import {
 } from "./tourismPlaces.validators.js";
 import { paramsIdVal } from "../../utils/idValidator.js";
 import { uploadFieldsOfFiles } from "../../services/fileUpload/upload.js";
+import { createFilterObj, setgovernrateIdToBody } from "../../middlewares/filterObject.js";
 
 const tourismPlacesRouter = express.Router({ mergeParams: true });
 
@@ -26,10 +27,11 @@ tourismPlacesRouter
       { name: "imgCover", maxCounts: 1 },
       { name: "images", maxCounts: 10 },
     ]),
+    setgovernrateIdToBody,
     validation(addtourismPlacesVal),
     addtourismPlace
   )
-  .get(getAlltourismPlaces);
+  .get(createFilterObj,getAlltourismPlaces);
 
 tourismPlacesRouter
   .route("/:id")

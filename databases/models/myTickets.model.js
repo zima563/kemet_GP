@@ -14,8 +14,7 @@ const schema = new mongoose.Schema(
       },
     ],
     totalPrice: Number,
-    totalPriceAfterDiscount: Number,
-    discount: Number,
+ 
   },
   { timestamps: true }
 );

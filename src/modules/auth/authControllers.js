@@ -1,15 +1,64 @@
 import bcrypt from "bcrypt";
 import Jwt from "jsonwebtoken";
-import randomstring from "randomstring";
 
 import { catchError } from "../../middlewares/catchError.js";
 import { apiError } from "../../utils/apiError.js";
 import { sendEmailPcode } from "../../services/email/sendEmailPinCode.js";
 import { userModel } from "../../../databases/models/user.model.js";
 
-const signup = catchError(async (req, res, next) => {
-  let user = new userModel(req.body);
+const verifyEmail = catchError(async (req, res, next) => {
+  let user = new userModel();
+  user.email=req.body.email;
+  const pinCode = Math.floor(100000 + Math.random() * 900000).toString();
+  const pinCodeExpire = new Date();
+  pinCodeExpire.setMinutes(pinCodeExpire.getMinutes() + 10);
+  user.pinCode = pinCode;
+  user.pinCodeExpire = pinCodeExpire;
+  user.confirmEmail = false;
+
   await user.save();
+  let token = Jwt.sign(
+        { userId:user._id },
+        process.env.JWT_KEY
+      );
+  sendEmailPcode(user.email, user.pinCode);
+
+  res.json({ msg: "send of message successfully",token });
+});
+
+const checkConformingEmail = catchError(async (req, res, next) => {
+  let user = await userModel.findById(req.user._id)
+  if (user.pinCode !== req.body.pinCode || new Date() > user.pinCodeExpire)
+        return next(new apiError("Invalid or expired PinCode", 401));
+
+    user.pinCode = undefined;
+    user.pinCodeExpire = undefined;
+    user.confirmEmail = true;
+    await user.save();
+    res.json({ msg: "verification of pinCode is successfully" });
+
+});
+
+const setingPassword = catchError(async (req, res, next) => {
+  let user = await userModel.findOne({_id:req.user._id,confirmEmail:true});
+  if (!user) return next(new apiError("user not found", 404));
+  
+  user.password = req.body.password;
+  await user.save();
+  let token = Jwt.sign(
+    { userId: user._id },
+    process.env.JWT_KEY
+  );
+
+  res.status(200).json({ msg: "reset password is success ", token });
+});
+
+const signup = catchError(async (req, res, next) => {
+  let user = await userModel.findOneAndUpdate({_id: req.user._id},{
+    name: req.body.name,
+    mobilePhone: req.body.mobilePhone,
+    DOB: req.body.DOB,
+  })
   let token = Jwt.sign(
     { userId: user._id, role: user.role },
     process.env.JWT_KEY
@@ -33,40 +82,37 @@ const signin = catchError(async (req, res, next) => {
 const forgettingPassword = catchError(async (req, res, next) => {
   let user = await userModel.findOne({ email: req.body.email });
   if (!user) return next(new apiError("not found email", 404));
-  const pinCode = randomstring.generate({ length: 4, charset: "numeric" });
+  const pinCode = Math.floor(100000 + Math.random() * 900000).toString();
+  const pinCodeExpire = new Date();
+  pinCodeExpire.setMinutes(pinCodeExpire.getMinutes() + 10);
   user.pinCode = pinCode;
+  user.pinCodeExpire = pinCodeExpire;
   user.resetVerified = false;
 
   await user.save();
+  let token = Jwt.sign(
+    { userId:user._id },
+    process.env.JWT_KEY
+  );
   sendEmailPcode(user.email, user.pinCode);
 
-  res.json({ msg: "send of message successfully" });
+  res.json({ msg: "send of message successfully",token });
 });
 
 const checkpinCode = catchError(async (req, res, next) => {
-  let user = await userModel.findOne({
-    email: req.body.email,
-    pinCode: req.body.pinCode,
-  });
-  if (!user) {
-    user.pinCode = undefined;
-    user.resetVerified = undefined;
-    await user.save();
-    next(new apiError("email or pinCode incorrect"));
-  } else {
+  let user = await userModel.findById(req.user._id);
+  if (user.pinCode !== req.body.pinCode || new Date() > user.pinCodeExpire)
+        return next(new apiError("Invalid or expired PinCode", 401));
     user.pinCode = undefined;
     user.resetVerified = true;
     await user.save();
     res.json({ msg: "verification of pinCode is successfully" });
-  }
+  
 });
 
 const resetPassword = catchError(async (req, res, next) => {
-  let user = await userModel.findOne({ email: req.body.email });
-  if (!user) return next(new apiError("not found email", 404));
-  if (!user.resetVerified) return next(new apiError("reset code not verify"));
-  user.pinCode = undefined;
-  user.resetVerified = undefined;
+  let user = await userModel.findOne({_id:req.user._id,resetVerified:true});
+
   user.password = req.body.newPassword;
   await user.save();
   let token = Jwt.sign(
@@ -138,6 +184,9 @@ const allowedTo = (...roles) => {
 export {
   signin,
   signup,
+  verifyEmail,
+  checkConformingEmail,
+  setingPassword,
   forgettingPassword,
   checkpinCode,
   resetPassword,

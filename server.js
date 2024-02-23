@@ -19,11 +19,15 @@ app.use("/", express.static("uploads"));
 app.use(express.json());
 
 bootstrap(app);
+// app.use("/", (req, res, next) => {
+//   res.json({ msg: "hello world" });
+// });
 
 app.use("*", (req, res, next) => {
   next(new apiError(`not found endPoint : ${req.originalUrl}`, 404));
 });
+
 process.on("unhandledRejection", (err) => {
   console.log("error", err);
 });
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(process.env.PORT || port, () => console.log(`Example app listening on port ${port}!`));

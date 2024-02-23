@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export const dbConnection = () => {
-  mongoose.connect("mongodb://127.0.0.1:27017/Kemet_GP").then(() => {
+  mongoose.connect(process.env.DB_URL).then(() => {
     console.log("database connection");
   });
 };

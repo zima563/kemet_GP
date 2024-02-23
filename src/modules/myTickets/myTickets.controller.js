@@ -8,7 +8,6 @@ const calcTotalPrice = (myTicket) => {
   myTicket.myTicketItems.forEach((item) => {
     totalPrice += item.quantity * item.price;
   });
-
   myTicket.totalPrice = totalPrice;
   if (myTicket.discount) {
     let totalPriceAfterDiscount =
@@ -23,9 +22,11 @@ const addToMyTickets = catchError(async (req, res, next) => {
 
   if (req.body.quantity > trip.quantity)
     return next(new apiError("sold out", 404));
-
-  req.body.price = trip.price;
-
+  if(trip.isOffered){
+  req.body.price = trip.priceAfterDiscount;
+  }else{
+    req.body.price = trip.price;
+  }
   let isMyTicketsExist = await myTicketModel.findOne({ user: req.user._id });
   if (!isMyTicketsExist) {
     let myTicket = new myTicketModel({
@@ -72,10 +73,15 @@ const removeItemFromMyTickets = catchError(async (req, res, next) => {
 const updateQTY = catchError(async (req, res, next) => {
   let myTicket = await myTicketModel.findOne({ user: req.user._id });
 
-  let item = myTicket.myTicketItems.find((item) => item._id == req.params.id);
+  let item = myTicket.myTicketItems.find((ele) => ele._id == req.params.id);
   if (!item) return next(new apiError("item not found", 404));
+  let trip = await tripModel.findById(item.trip)
+   
+  if(req.body.quantity>trip.quantity) 
+       return next(new apiError("sold out", 404));
+  
   item.quantity = req.body.quantity;
-
+  
   calcTotalPrice(myTicket);
   await myTicket.save();
 

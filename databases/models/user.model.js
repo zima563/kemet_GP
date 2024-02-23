@@ -7,7 +7,6 @@ const schema = new mongoose.Schema(
       trim: true,
       min: [2, "too short user name"],
       max: [50, "too long user name"],
-      required: [true, "user name is required"],
     },
     email: {
       type: String,
@@ -15,9 +14,13 @@ const schema = new mongoose.Schema(
       unique: [true, "email is required"],
       required: [true, "eamil is required"],
     },
+    mobilePhone:String,
+    DOB: {
+      type: Date,
+      trim: true,
+    },
     password: {
       type: String,
-      required: [true, "password is required"],
     },
     profileImg: {
       type: String,
@@ -39,7 +42,10 @@ const schema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    confirmEmail:Boolean,
+    
     pinCode: String,
+    pinCodeExpire: Date,
     resetVerified: Boolean,
     passwordChangedAt: Date,
     logoutAt: Date,
@@ -65,12 +71,6 @@ const schema = new mongoose.Schema(
       {
         type: mongoose.Types.ObjectId,
         ref: "trip",
-      },
-    ],
-    wishListOffer: [
-      {
-        type: mongoose.Types.ObjectId,
-        ref: "offer",
       },
     ],
   },

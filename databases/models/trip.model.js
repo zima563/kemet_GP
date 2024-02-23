@@ -34,6 +34,7 @@ const schema = new mongoose.Schema(
       required: true,
       max: [10000000, "too much price"],
     },
+    priceAfterDiscount:Number,
     imgCover: String,
     images: [
       {
@@ -52,10 +53,15 @@ const schema = new mongoose.Schema(
       type: Number,
       min: 0,
       max: 5,
+      default:0
     },
     ratingQuantity: {
       type: Number,
       default: 0,
+    },
+    isOffered:{
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true, toJSON: { virtuals: true } }

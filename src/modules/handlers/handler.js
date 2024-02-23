@@ -23,17 +23,6 @@ export const updateOne = (model) => {
     if (req.files?.images) {
       req.body.images = req.files.images.map((val) => val.filename);
     }
-    if (model == reviewModel) {
-      let document = await model.findOneAndUpdate(
-        { _id: req.params.id, user: req.user._id },
-        req.body,
-        {
-          new: true,
-        }
-      );
-      !document && next(new apiError("not document found", 404));
-      document && res.json({ msg: "success", document });
-    }
     let document = await model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
@@ -50,7 +39,6 @@ export const addOne = (model) => {
     if (req.files?.imgCover) req.body.imgCover = req.files.imgCover[0].filename;
     if (req.files?.images)
       req.body.images = req.files.images.map((val) => val.filename);
-    if (model == reviewModel) req.body.user = req.user._id;
     let document = new model(req.body);
     await document.save();
     res.json({ msg: "success", document });
