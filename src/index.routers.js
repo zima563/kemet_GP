@@ -31,6 +31,9 @@ export const bootstrap = (app) => {
   app.use("/api/v1/legendWL",legendWishListRouter)
   app.use("/api/v1/tripWL",tripWishListRouter)
   
+  app.use("*", (req, res, next) => {
+    next(new apiError(`not found endPoint : ${req.originalUrl}`, 404));
+  });
 
   app.use(globalError);
 };

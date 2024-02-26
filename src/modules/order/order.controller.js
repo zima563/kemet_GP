@@ -79,9 +79,66 @@ const createCheckOutSessions = catchError(async (req, res, next) => {
     res.json({ msg: "success", session });
   });
 
+const createOnlineOrder = catchError((request, response) => {
+    const sig = request.headers['stripe-signature'].toString();
+  
+    let event;
+  
+    try {
+      event = stripe.webhooks.constructEvent(request.body, sig, "whsec_1raOW2anm5YgBxb8mDPU2boxKtWH6fdG");
+    } catch (err) {
+      return response.status(400).send(`Webhook Error: ${err.message}`);
+      
+    }
+  
+    if(event.type=='checkout.session.completed'){
+      
+      card(event.data.object,response)
+      console.log("create order here.........");
+    }else{
+
+      console.log(`Unhandled event type ${event.type}`);
+    }
+  });
+
 export{
     createCashOrder,
     getSpecificOrder,   
     getAllOrders,
-    createCheckOutSessions
+    createCheckOutSessions,
+    createOnlineOrder
+}
+
+async function card(e,res){
+  let myTicket = await myTicketModel.findById(e.client_reference_id);
+  if (!myTicket) return next(new apiError("not myTicket found", 404));
+  let user = await userModel.findOne({email: e.customer_email})
+
+  let order = new orderModel({
+    user: user._id,
+    orderItems: myTicket.myTicketItems,
+    totalOrderPrice: e.amount_total/100 ,
+    shippingAddress: e.metadata.shippingAddress,
+    paymentType: "card",
+    isPaid: true,
+    paidAt: Date.now(),
+
+
+  });
+  await order.save();
+
+  let options = myTicket.myTicketItems.map((prod) => {
+    return {
+      updateOne: {
+        filter: { _id: prod.product },
+        update: { $inc: { sold: prod.quantity, quantity: -prod.quantity } },
+      },
+    };
+  });
+
+  await tripModel.bulkWrite(options);
+
+  await myTicketModel.findOneAndDelete({user:user._id});
+
+  res.json({ msg: "success", order });
 }
