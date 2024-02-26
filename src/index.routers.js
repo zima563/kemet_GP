@@ -13,6 +13,7 @@ import legendWishListRouter from "./modules/legendWL/legendWL.routes.js";
 import tripWishListRouter from "./modules/tripWL/tripWL.routes.js";
 import { myTicketRouter } from "./modules/myTickets/myTickets.routes.js";
 import { orderRouter } from "./modules/order/order.routes.js";
+import { apiError } from "./utils/apiError.js";
 
 
 export const bootstrap = (app) => {
