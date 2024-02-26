@@ -1,6 +1,7 @@
 import { myTicketModel } from "../../../databases/models/myTickets.model.js";
 import { orderModel } from "../../../databases/models/orderModel.js";
 import { tripModel } from "../../../databases/models/trip.model.js";
+import { userModel } from "../../../databases/models/user.model.js";
 import { catchError } from "../../middlewares/catchError.js";
 import { apiError } from "../../utils/apiError.js";
 import Stripe from "stripe";
@@ -130,7 +131,7 @@ async function card(e,res){
   let options = myTicket.myTicketItems.map((prod) => {
     return {
       updateOne: {
-        filter: { _id: prod.product },
+        filter: { _id: prod.trip },
         update: { $inc: { sold: prod.quantity, quantity: -prod.quantity } },
       },
     };
