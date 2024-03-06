@@ -72,7 +72,7 @@ const createCheckOutSessions = catchError(async (req, res, next) => {
       ],
       mode: "payment",
       cancel_url: "http://localhost:3000/api/v1/order",
-      success_url: "https://kemet-gp2024.onrender.com/api/v1/",
+      success_url: "https://kemet-gp2024.onrender.com/",
       customer_email: req.user.email,
       client_reference_id: req.params.id,
       metadata: req.body.shippingAddress,
