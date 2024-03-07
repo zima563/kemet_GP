@@ -23,11 +23,11 @@ const createCashOrder = catchError(async(req,res,next)=>{
     });
     await order.save();
     
-    let options = myTicket.myTicketItems.map((trip)=>{
+    let options = myTicket.myTicketItems.map((prod)=>{
         return {
             updateOne: {
-                filter: {_id:trip._id},
-                update: { $inc: {sold: trip.quantity,quantity: -trip.quantity}}
+                filter: {_id: prod.trip},
+                update: { $inc: {sold: prod.quantity,quantity: -prod.quantity}}
             }
         }
     })
@@ -71,7 +71,7 @@ const createCheckOutSessions = catchError(async (req, res, next) => {
         },
       ],
       mode: "payment",
-      cancel_url: "http://localhost:3000/api/v1/order",
+      cancel_url: "https://kemet-gp2024.onrender.com/api/v1/MyTickets",
       success_url: "https://kemet-gp2024.onrender.com/",
       customer_email: req.user.email,
       client_reference_id: req.params.id,
