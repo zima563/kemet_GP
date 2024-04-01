@@ -15,6 +15,7 @@ const schema = new mongoose.Schema(
       required: [true, "eamil is required"],
     },
     mobilePhone:String,
+    city: String,
     DOB: {
       type: Date,
       trim: true,

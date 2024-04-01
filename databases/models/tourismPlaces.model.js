@@ -15,6 +15,11 @@ const schema = new mongoose.Schema(
       lowercase: true,
       required: true,
     },
+    informationAbout: {
+      type: String,
+      trim: true,
+      require: true,
+    },
     governrate: {
       type: mongoose.Types.ObjectId,
       ref: "governrate",

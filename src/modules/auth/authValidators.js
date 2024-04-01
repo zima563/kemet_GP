@@ -17,9 +17,10 @@ const setingPasswordValidator = Joi.object({
 })
 
 const signupValidator = Joi.object({
-  name: Joi.string().min(2).max(20),
+  name: Joi.string().min(2).max(20).trim().required(),
   mobilePhone: Joi.string().pattern(/^(00201|\+201|01)[0-2,5]{1}[0-9]{8}$/).required(),
   DOB: Joi.string().pattern(/^\d{4}-\d{1,2}-\d{1,2}$/).trim().required(),
+  city: Joi.string().min(2).max(30).trim().required(),
 });
 
 const signinValidator = Joi.object({
