@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 const addtourismPlacesVal = Joi.object({
-  name: Joi.string().min(2).max(100).trim().required(),
+  name: Joi.string().min(2).max(300).trim().required(),
   informationAbout: Joi.string().min(2).max(3000).trim().required(),
   governrate: Joi.string().length(24).hex().required(),
   imgCover: Joi.array()
@@ -42,7 +42,7 @@ const addtourismPlacesVal = Joi.object({
 const updatetourismPlacesVal = Joi.object({
   id: Joi.string().length(24).hex().required(),
 
-  name: Joi.string().min(2).max(100).trim(),
+  name: Joi.string().min(2).max(300).trim(),
   informationAbout: Joi.string().min(2).max(3000).trim(),
   governrate: Joi.string().length(24).hex(),
   imgCover: Joi.array().items(
