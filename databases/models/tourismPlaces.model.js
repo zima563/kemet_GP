@@ -8,7 +8,7 @@ const schema = new mongoose.Schema(
       trim: true,
       required: true,
       minlength: [2, "too short governrate name"],
-      maxlength: [20, "too long governrate name"],
+      maxlength: [300, "too long governrate name"],
     },
     slug: {
       type: String,
