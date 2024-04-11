@@ -32,7 +32,7 @@ const signupValidator = Joi.object({
     filename: Joi.string().required(),
     path: Joi.string().required(),
     size: Joi.number().max(5242880).required(),
-  }).required(),
+  }),
 });
 
 const signinValidator = Joi.object({

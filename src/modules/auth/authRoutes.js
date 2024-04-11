@@ -46,7 +46,7 @@ authRouter
   .post(validation(setingPasswordValidator),authConferming,setingPassword);
 authRouter
   .route("/signup")
-  .post(validation(signupValidator), authConferming, uploadSingleFile("profileImg"), signup);
+  .post(uploadSingleFile("profileImg"), validation(signupValidator), authConferming, signup);
 authRouter.route("/signin").post(validation(signinValidator), signin);
 authRouter
   .route("/forgettingPassword")
