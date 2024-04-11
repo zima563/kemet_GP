@@ -5,13 +5,11 @@ const schema = new mongoose.Schema(
     firstName: {
       type: String,
       trim: true,
-      required: [true, "firstName is required"],
       lowercase: true,
     },
     lastName: {
       type: String,
       trim: true,
-      required: [true, "lastName is required"],
       lowercase: true
     },
     email: {
