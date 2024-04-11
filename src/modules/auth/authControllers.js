@@ -55,8 +55,8 @@ const setingPassword = catchError(async (req, res, next) => {
 
 const signup = catchError(async (req, res, next) => {
   let user = await userModel.findOneAndUpdate({_id: req.user._id},{
-    name: req.body.name,
-    mobilePhone: req.body.mobilePhone,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
     DOB: req.body.DOB,
   })
   let token = Jwt.sign(

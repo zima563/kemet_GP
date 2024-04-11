@@ -30,6 +30,7 @@ import {
 import { validation } from "../../middlewares/validation.js";
 import { emailExists } from "../../middlewares/emailExist.js";
 import { authConferming } from "../../middlewares/authConferming.js";
+import { uploadSingleFile } from "../../services/fileUpload/upload.js";
 
 const authRouter = express.Router();
 
@@ -45,7 +46,7 @@ authRouter
   .post(validation(setingPasswordValidator),authConferming,setingPassword);
 authRouter
   .route("/signup")
-  .post(validation(signupValidator), authConferming, signup);
+  .post(validation(signupValidator), authConferming, uploadSingleFile("profileImg"), signup);
 authRouter.route("/signin").post(validation(signinValidator), signin);
 authRouter
   .route("/forgettingPassword")

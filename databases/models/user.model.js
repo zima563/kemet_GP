@@ -2,11 +2,17 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 const schema = new mongoose.Schema(
   {
-    name: {
+    firstName: {
       type: String,
       trim: true,
-      min: [2, "too short user name"],
-      max: [50, "too long user name"],
+      required: [true, "firstName is required"],
+      lowercase: true,
+    },
+    lastName: {
+      type: String,
+      trim: true,
+      required: [true, "lastName is required"],
+      lowercase: true
     },
     email: {
       type: String,
@@ -14,7 +20,6 @@ const schema = new mongoose.Schema(
       unique: [true, "email is required"],
       required: [true, "eamil is required"],
     },
-    mobilePhone:String,
     city: String,
     DOB: {
       type: Date,
@@ -77,6 +82,11 @@ const schema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// todo userName virtual
+schema.virtual("userName").get(function () {
+  return this.firstName + " " + this.lastName
+})
 
 schema.post("init", (doc) => {
   if (doc.profileImg) doc.profileImg = process.env.BASE_URL + doc.profileImg;

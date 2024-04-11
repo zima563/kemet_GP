@@ -17,10 +17,22 @@ const setingPasswordValidator = Joi.object({
 })
 
 const signupValidator = Joi.object({
-  name: Joi.string().min(2).max(20).trim().required(),
-  mobilePhone: Joi.string().pattern(/^(00201|\+201|01)[0-2,5]{1}[0-9]{8}$/).required(),
+  firstName: Joi.string().min(2).max(30).trim().required(),
+  lastName: Joi.string().min(2).max(30).trim().required(),
   DOB: Joi.string().pattern(/^\d{4}-\d{1,2}-\d{1,2}$/).trim().required(),
   city: Joi.string().min(2).max(30).trim().required(),
+  profileImg: Joi.object({
+    fieldname: Joi.string().required(),
+    originalname: Joi.string().required(),
+    encoding: Joi.string().required(),
+    mimetype: Joi.string()
+      .valid("image/png", "image/jpg", "image/jpeg")
+      .required(),
+    destination: Joi.string().required(),
+    filename: Joi.string().required(),
+    path: Joi.string().required(),
+    size: Joi.number().max(5242880).required(),
+  }).required(),
 });
 
 const signinValidator = Joi.object({
