@@ -1,3 +1,4 @@
+import { signupValidator } from "../modules/auth/authValidators.js";
 import { addUserVal, updateUserVal } from "../modules/user/userValidators.js";
 import { apiError } from "../utils/apiError.js";
 
@@ -5,7 +6,7 @@ export const validation = (schema) => {
   return (req, res, next) => {
     let filter = {};
     if (req.file) {
-      if (schema == addUserVal || schema == updateUserVal) {
+      if (schema == addUserVal || schema == updateUserVal || schema == signupValidator) {
         filter = {
           profileImg: req.file,
           ...req.params,
