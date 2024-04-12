@@ -46,7 +46,6 @@ const schema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    confirmEmail:Boolean,
     
     pinCode: String,
     pinCodeExpire: Date,
