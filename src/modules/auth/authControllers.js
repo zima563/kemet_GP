@@ -123,6 +123,21 @@ const resetPassword = catchError(async (req, res, next) => {
   res.status(200).json({ msg: "reset password is success ", token });
 });
 
+const userProfile = catchError(async (req, res, next) => {
+  let user = req.user;
+  res.status(200).json({ msg: "success ", user });
+});
+
+const updateUserProfie = catchError(async (req, res, next) => {
+  if (req.file) req.body.profileImg = req.file.filename;
+  let user = await userModel.findByIdAndUpdate(req.user._id, req.body, {
+    new: true,
+  });
+  !user && next(new apiError("not user found", 404));
+  user && res.json({ msg: "success", user });
+});
+
+
 const changePassword = catchError(async (req, res, next) => {
   let user = await userModel.findById(req.user._id);
   if (user && bcrypt.compareSync(req.body.currentPassword, user.password)) {
@@ -193,5 +208,7 @@ export {
   protectRoutes,
   changePassword,
   allowedTo,
+  userProfile,
+  updateUserProfie,
   logout,
 };

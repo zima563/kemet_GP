@@ -11,6 +11,8 @@ import {
   setingPassword,
   signin,
   signup,
+  updateUserProfie,
+  userProfile,
   verifyEmail,
 } from "./authControllers.js";
 
@@ -23,6 +25,7 @@ import {
   setingPasswordValidator,
   signinValidator,
   signupValidator,
+  updateUserProfileValidator,
   verifyEmailValidator,
 
 } from "./authValidators.js";
@@ -65,6 +68,21 @@ authRouter
     validation(changePasswordValidator),
     changePassword
   );
+authRouter
+  .route("/profile")
+  .get(
+    protectRoutes,
+    allowedTo("admin", "user"),
+    userProfile
+  ),
+  authRouter
+    .route("/updateProfile")
+    .patch(
+      protectRoutes,
+      allowedTo("admin", "user"),
+      validation(updateUserProfileValidator),
+      updateUserProfie,
+    )
 authRouter
   .route("/logOut")
   .patch(protectRoutes, allowedTo("admin", "user"), logout);

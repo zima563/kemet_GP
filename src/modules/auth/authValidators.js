@@ -35,6 +35,25 @@ const signupValidator = Joi.object({
   }),
 });
 
+const updateUserProfileValidator = Joi.object({
+  firstName: Joi.string().min(2).max(30).trim(),
+  lastName: Joi.string().min(2).max(30).trim(),
+  DOB: Joi.string().pattern(/^\d{4}-\d{1,2}-\d{1,2}$/).trim(),
+  city: Joi.string().min(2).max(30).trim(),
+  profileImg: Joi.object({
+    fieldname: Joi.string().required(),
+    originalname: Joi.string().required(),
+    encoding: Joi.string().required(),
+    mimetype: Joi.string()
+      .valid("image/png", "image/jpg", "image/jpeg")
+      .required(),
+    destination: Joi.string().required(),
+    filename: Joi.string().required(),
+    path: Joi.string().required(),
+    size: Joi.number().max(5242880).required(),
+  }),
+});
+
 const signinValidator = Joi.object({
   email: Joi.string().pattern(/[A-Za-z0-9]{3,50}@(gmail|yahoo).com$/),
   password: Joi.string().pattern(
@@ -76,4 +95,5 @@ export {
   verifyEmailValidator,
   checkConformingEmailValidator,
   setingPasswordValidator,
+  updateUserProfileValidator
 };
