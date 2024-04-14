@@ -54,10 +54,13 @@ const setingPassword = catchError(async (req, res, next) => {
 });
 
 const signup = catchError(async (req, res, next) => {
+  if (req.file) req.body.profileImg = req.file.filename;
   let user = await userModel.findOneAndUpdate({_id: req.user._id},{
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     DOB: req.body.DOB,
+    city: req.body.city,
+    profileImg: req.body.profileImg,
   })
   let token = Jwt.sign(
     { userId: user._id, role: user.role },
@@ -68,7 +71,6 @@ const signup = catchError(async (req, res, next) => {
 
 const signin = catchError(async (req, res, next) => {
   let user = await userModel.findOne({ email: req.body.email });
-
   if (user && bcrypt.compareSync(req.body.password, user.password)) {
     let token = Jwt.sign(
       { userId: user._id, role: user.role },
