@@ -132,9 +132,10 @@ const userProfile = catchError(async (req, res, next) => {
 
 const updateUserProfie = catchError(async (req, res, next) => {
   if (req.file) req.body.profileImg = req.file.filename;
-  let user = await userModel.findByIdAndUpdate(req.user._id, req.body, {
+  let user = await userModel.findOneAndUpdate({ _id: req.user._id }, req.body, {
     new: true,
   });
+
   !user && next(new apiError("not user found", 404));
   user && res.json({ msg: "success", user });
 });

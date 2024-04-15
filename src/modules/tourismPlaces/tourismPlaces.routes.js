@@ -39,13 +39,14 @@ tourismPlacesRouter
   .put(
     protectRoutes,
     allowedTo("admin"),
+    validation(updatetourismPlacesVal),
     uploadFieldsOfFiles([
       { name: "imgCover", maxCounts: 1 },
       { name: "images", maxCounts: 10 },
     ]),
-    validation(updatetourismPlacesVal),
+
     updatetourismPlace
-  )
+)
   .delete(
     protectRoutes,
     allowedTo("admin"),

@@ -62,7 +62,7 @@ authRouter
   .post(validation(resetPasswordValidator),authConferming, resetPassword);
 authRouter
   .route("/changePassword")
-  .patch(
+  .put(
     protectRoutes,
     allowedTo("admin", "user"),
     validation(changePasswordValidator),
@@ -77,9 +77,10 @@ authRouter
   ),
   authRouter
     .route("/updateProfile")
-    .patch(
+  .put(
       protectRoutes,
       allowedTo("admin", "user"),
+    uploadSingleFile("profileImg"),
       validation(updateUserProfileValidator),
       updateUserProfie,
     )

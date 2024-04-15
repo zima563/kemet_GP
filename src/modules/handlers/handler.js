@@ -23,9 +23,11 @@ export const updateOne = (model) => {
     if (req.files?.images) {
       req.body.images = req.files.images.map((val) => val.filename);
     }
+
     let document = await model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
+
     !document && next(new apiError("not document found", 404));
     document && res.json({ msg: "success", document });
   });
