@@ -62,7 +62,7 @@ authRouter
   .post(validation(resetPasswordValidator),authConferming, resetPassword);
 authRouter
   .route("/changePassword")
-  .put(
+  .patch(
     protectRoutes,
     allowedTo("admin", "user"),
     validation(changePasswordValidator),
