@@ -152,7 +152,7 @@ const changePassword = catchError(async (req, res, next) => {
       password: req.body.newPassword,
       passwordChangedAt: Date.now(),
     });
-    return res.json({ msg: "success", token });
+    return res.json({ msg: "your password is changed successfully", token });
   }
 
   next(new apiError("password incorrect", 401));
