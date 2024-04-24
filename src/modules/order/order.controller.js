@@ -52,7 +52,7 @@ const getAllOrders = catchError(async (req, res, next) => {
     res.json({ msg: "success", orders });
   });
 
-const createCheckOutSessions = catchError(async (req, res, next) => {
+const createCheckOutSessions = async (req, res, next) => {
     let myTicket = await myTicketModel.findById(req.params.id);
     if(!myTicket) return next(new apiError("not myTicket found",404));
 
@@ -64,7 +64,7 @@ const createCheckOutSessions = catchError(async (req, res, next) => {
             currency: "egp",
             unit_amount: totalOrderPrice * 100,
             product_data: {
-              name: req.user.name,
+              name: req.user.firstName + " " + req.user.lastName,
             },
           },
           quantity: 1,
@@ -78,7 +78,7 @@ const createCheckOutSessions = catchError(async (req, res, next) => {
       metadata: req.body.shippingAddress,
     });
     res.json({ msg: "success", session });
-  });
+  };
 
 const createOnlineOrder = (request, response) => {
     const sig = request.headers['stripe-signature'].toString();
