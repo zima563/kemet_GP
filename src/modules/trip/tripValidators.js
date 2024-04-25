@@ -1,8 +1,8 @@
 import Joi from "joi";
 
 const addTripVal = Joi.object({
-  title: Joi.string().min(2).max(20).required().trim(),
-  description: Joi.string().trim().required().min(2).max(50),
+  title: Joi.string().min(2).max(100).required().trim(),
+  description: Joi.string().trim().required().min(2).max(3000),
   quantity: Joi.number().optional().min(0),
   price: Joi.number().required().min(0),
   priceAfterDiscount: Joi.number().optional(),
@@ -47,8 +47,8 @@ const addTripVal = Joi.object({
 const updateTripVal = Joi.object({
   id: Joi.string().length(24).hex().required(),
 
-  title: Joi.string().min(2).max(20).optional().trim(),
-  description: Joi.string().trim().optional().min(2).max(50),
+  title: Joi.string().min(2).max(100).optional().trim(),
+  description: Joi.string().trim().optional().min(2).max(3000),
   quantity: Joi.number().optional().min(0),
   price: Joi.number().min(0),
   priceAfterDiscount: Joi.number().optional(),
