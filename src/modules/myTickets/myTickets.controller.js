@@ -94,7 +94,7 @@ const getLoggedUserMyTickets = catchError(async (req, res, next) => {
     .findOne({ user: req.user._id })
     .populate("myTicketItems.trip");
 
-  !myTicket && res.status(404).json({ msg: "myTicket not found" });
+  !myTicket && res.status(200).json({ msg: "myTicket not found" });
   myTicket && res.json({ msg: "success", myTicket });
 });
 
