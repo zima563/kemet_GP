@@ -14,10 +14,10 @@ const addReview = catchError(async(req,res,next)=>{
   review.trip = req.params.id;
   await review.save();
   
-  trip.ratingQuantity+=1
-  trip.ratingAverage=(trip.ratingAverage+review.rate)/trip.ratingQuantity
+  let ratingQuantity = trip.ratingQuantity++
+  let ratingAverage =(trip.ratingAverage+review.rate)/trip.ratingQuantity
   
-  await trip.save()
+  await tripModel.findByIdAndUpdate(req.params.id,{ratingAverage,ratingQuantity})
   res.status(200).json({msg:"success",review});
 })
 
@@ -41,13 +41,14 @@ const updateReview = catchError(async(req,res,next)=>{
           new: true,
         }
       );
+    !review && next(new apiError("not review found", 404));
   let trip = await tripModel.findById(review.trip)
   if(req.body.rate){
     trip.ratingAverage=trip.ratingAverage-(trip.ratingAverage/1)
     trip.ratingAverage=(trip.ratingAverage+review.rate)/trip.ratingQuantity
+    let ratingAve = trip.ratingAverage
   }
-    await trip.save()
-      !review && next(new apiError("not review found", 404));
+    await tripModel.findByIdAndUpdate(review.trip,{ratingAverage:ratingAve})
       review && res.json({ msg: "success", review });
 })
 
@@ -56,9 +57,9 @@ const deleteReview = catchError(async(req,res,next)=>{
     !review && next(new apiError("not review found", 404));
     
     let trip = await tripModel.findById(review.trip);
-    trip.ratingAverage=trip.ratingAverage-(trip.ratingAverage/1)
-    trip.ratingQuantity-=1
-    await trip.save()
+    let ratingAverage=trip.ratingAverage-(trip.ratingAverage/1)
+    let ratingQuantity = trip.ratingQuantity--
+    await tripModel.findByIdAndUpdate(review.trip,{ratingAverage,ratingQuantity})
     review && res.json({ msg: "success", review });
 })
 
