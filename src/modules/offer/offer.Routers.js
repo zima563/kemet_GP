@@ -18,11 +18,11 @@ const offerRouter = express.Router();
 offerRouter
   .route("/")
   .post(protectRoutes, allowedTo("admin"), validation(addOfferVal), addOffer)
-  .get(getOffers);
+  .get(protectRoutes,allowedTo("user"),getOffers);
 
 offerRouter
   .route("/:id")
-  .get(validation(paramsIdVal), getOffer)
+  .get(protectRoutes,allowedTo("user"),validation(paramsIdVal), getOffer)
   .put(
     protectRoutes,
     allowedTo("admin"),
