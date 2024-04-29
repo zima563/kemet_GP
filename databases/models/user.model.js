@@ -86,9 +86,6 @@ schema.virtual("userName").get(function () {
   return this.firstName + " " + this.lastName
 })
 
-// schema.post("init", (doc) => {
-//   if (doc.profileImg) doc.profileImg = process.env.BASE_URL + doc.profileImg;
-// });
 schema.pre("save", function () {
   if (this.password) this.password = bcrypt.hashSync(this.password, 8);
 });

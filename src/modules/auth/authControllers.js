@@ -44,6 +44,7 @@ const setingPassword = catchError(async (req, res, next) => {
   if (!user) return next(new apiError("user not found", 404));
   
   user.password = req.body.password;
+  user.profileImg = `https://kemet-gp2024.onrender.com/${user.profileImg}`;
   await user.save();
   let token = Jwt.sign(
     { userId: user._id },
@@ -60,7 +61,7 @@ const signup = catchError(async (req, res, next) => {
     lastName: req.body.lastName,
     DOB: req.body.DOB,
     city: req.body.city,
-    profileImg: req.body.profileImg,
+    profileImg: `https://kemet-gp2024.onrender.com/${req.body.profileImg}`,
   })
   let token = Jwt.sign(
     { userId: user._id, role: user.role },
