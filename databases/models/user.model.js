@@ -28,6 +28,7 @@ const schema = new mongoose.Schema(
     },
     profileImg: {
       type: String,
+      default: "defaultAvatar.png"
     },
     role: {
       type: String,
