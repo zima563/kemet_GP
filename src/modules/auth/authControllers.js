@@ -45,7 +45,7 @@ const setingPassword = catchError(async (req, res, next) => {
   
   user.password = req.body.password;
   
-  user.profileImg = `https://kemet-gp2024.onrender.com/${userProfile}` ;
+  user.profileImg = `https://kemet-gp2024.onrender.com/${user.profileImg}` ;
   await user.save();
   let token = Jwt.sign(
     { userId: user._id },
