@@ -44,7 +44,8 @@ const setingPassword = catchError(async (req, res, next) => {
   if (!user) return next(new apiError("user not found", 404));
   
   user.password = req.body.password;
-  user.profileImg = `https://kemet-gp2024.onrender.com/defaultAvatar.png`;
+  
+  user.profileImg = `https://kemet-gp2024.onrender.com/${userProfile}` ;
   await user.save();
   let token = Jwt.sign(
     { userId: user._id },
@@ -56,12 +57,14 @@ const setingPassword = catchError(async (req, res, next) => {
 
 const signup = catchError(async (req, res, next) => {
   if (req.file) req.body.profileImg = req.file.filename;
+  let profile = req.body.profileImg?req.body.profileImg:"defaultAvatar.png";
+
   let user = await userModel.findOneAndUpdate({_id: req.user._id},{
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     DOB: req.body.DOB,
     city: req.body.city,
-    profileImg: `https://kemet-gp2024.onrender.com/${req.body.profileImg}`,
+    profileImg: `https://kemet-gp2024.onrender.com/${profile}`,
   })
   let token = Jwt.sign(
     { userId: user._id, role: user.role },
