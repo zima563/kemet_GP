@@ -136,7 +136,14 @@ const userProfile = catchError(async (req, res, next) => {
 
 const updateUserProfie = catchError(async (req, res, next) => {
   if (req.file) req.body.profileImg = req.file.filename;
-  let user = await userModel.findOneAndUpdate({ _id: req.user._id }, req.body, {
+  let profile = req.body.profileImg?req.body.profileImg:"defaultAvatar.png";
+  let user = await userModel.findOneAndUpdate({ _id: req.user._id },{
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    DOB: req.body.DOB,
+    city: req.body.city,
+    profileImg: `https://kemet-gp2024.onrender.com/${profile}`,
+  }, {
     new: true,
   });
 
