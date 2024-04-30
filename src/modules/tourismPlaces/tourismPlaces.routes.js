@@ -31,11 +31,11 @@ tourismPlacesRouter
     validation(addtourismPlacesVal),
     addtourismPlace
   )
-  .get(protectRoutes,allowedTo("user"),createFilterObj,getAlltourismPlaces);
+  .get(createFilterObj,getAlltourismPlaces);
 
 tourismPlacesRouter
   .route("/:id")
-  .get(protectRoutes,allowedTo("user"),validation(paramsIdVal), getSingletourismPlace)
+  .get(validation(paramsIdVal), getSingletourismPlace)
   .put(
     protectRoutes,
     allowedTo("admin"),
