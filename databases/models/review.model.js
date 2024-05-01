@@ -26,6 +26,6 @@ const schema = new mongoose.Schema(
 );
 
 schema.pre(/^find/, function () {
-  this.populate("user", "name profileImg");
+  this.populate("user", "firstName lastName profileImg");
 });
 export const reviewModel = mongoose.model("review", schema);
