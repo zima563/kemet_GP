@@ -62,7 +62,8 @@ const updateReview = catchError(async (req, res, next) => {
 });
 
 const deleteReview = catchError(async (req, res, next) => {
-  let review = await reviewModel.findByIdAndDelete(req.params.id);
+  let review = await reviewModel.findOneAndDelete({ _id: req.params.id,
+    user: req.user._id,});
   !review && next(new apiError("not review found", 404));
 
   let trip = await tripModel.findById(review.trip);
