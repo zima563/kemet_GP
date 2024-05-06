@@ -29,13 +29,13 @@ app.use(express.json());
 
 
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100, 
-  message: "too many accounts created from this IP , please try again an hour",
-})
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000,
+//   max: 100, 
+//   message: "too many accounts created from this IP , please try again an hour",
+// })
 
-app.use(limiter);
+// app.use(limiter);
 
 //middleware to protect against HTTP Parameter Pollution attacks
 app.use(hpp({whitelist:["price","sold","quantity","ratingQuantity","ratingAverage"]}));
