@@ -34,8 +34,9 @@ const updateOffer = catchError(async (req, res, next) => {
 });
 
 const deleteOffer = catchError(async (req, res, next) => {
-  let offer = await tripModel.findByIdAndUpdate(req.param.id,{isOffered:false,priceAfterDiscount:undefined},{new:true})
-  if (!offer) return next(new apiError("not offer found"));
+
+  let offer = await tripModel.findOneAndUpdate({_id:req.params.id,isOffered:true},{isOffered:false,priceAfterDiscount:0},{new:true});
+  
   res.json({ msg: "success", offer });
 });
 
