@@ -15,7 +15,7 @@ import { emailExists } from "../../middlewares/emailExist.js";
 import { uploadSingleFile } from "../../services/fileUpload/upload.js";
 
 const userRouter = express.Router();
-// userRouter.use(protectRoutes, allowedTo("admin"));
+userRouter.use(protectRoutes, allowedTo("admin"));
 userRouter
   .route("/")
   .post(
