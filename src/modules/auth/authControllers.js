@@ -80,7 +80,8 @@ const signin = catchError(async (req, res, next) => {
       { userId: user._id, role: user.role },
       process.env.JWT_KEY
     );
-    return res.json({ msg: "success", token });
+
+    return res.json({ msg: "success", token , role: user.role});
   }
   next(new apiError("email or password incorrect", 401));
 });
