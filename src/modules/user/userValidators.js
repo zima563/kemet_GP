@@ -1,16 +1,16 @@
 import Joi from "joi";
 
 const addUserVal = Joi.object({
-  name: Joi.string().trim().min(2).required(),
-  email: Joi.string().trim().email().required(),
-  mobilePhone: Joi.string().pattern(/^(00201|\+201|01)[0-2,5]{1}[0-9]{8}$/).required(),
+  firstName: Joi.string().min(2).max(30).trim().required(),
+  lastName: Joi.string().min(2).max(30).trim().required(),
+  email: Joi.string().pattern(/[A-Za-z0-9]{3,50}@(gmail|yahoo).com$/).required(),
+  password: Joi.string().pattern(
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+  ),
+  rePassword: Joi.valid(Joi.ref("password")), 
   DOB: Joi.string().pattern(/^\d{4}-\d{1,2}-\d{1,2}$/).trim().required(),
+  role: Joi.string().pattern(/^(admin|user)$/),
   city: Joi.string().min(2).max(30).trim().required(),
-  password: Joi.string()
-    .pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)
-    .required(),
-  rePassword: Joi.valid(Joi.ref("password")).required(),
-  role: Joi.string().valid("admin", "user"),
   profileImg: Joi.object({
     fieldname: Joi.string().required(),
     originalname: Joi.string().required(),
@@ -22,7 +22,7 @@ const addUserVal = Joi.object({
     filename: Joi.string().required(),
     path: Joi.string().required(),
     size: Joi.number().max(5242880).required(),
-  }).required(),
+  }),
 });
 
 const paramsVal = Joi.object({
@@ -31,15 +31,16 @@ const paramsVal = Joi.object({
 
 const updateUserVal = Joi.object({
   id: Joi.string().length(24).hex(),
-  name: Joi.string().trim().min(2),
-  email: Joi.string().trim().email(),
-  mobilePhone: Joi.string().pattern(/^(00201|\+201|01)[0-2,5]{1}[0-9]{8}$/),
-  DOB: Joi.string().pattern(/^\d{4}-\d{1,2}-\d{1,2}$/).trim(),
-  city: Joi.string().min(2).max(30).trim(),
+  firstName: Joi.string().min(2).max(30).trim(),
+  lastName: Joi.string().min(2).max(30).trim(),
+  email: Joi.string().pattern(/[A-Za-z0-9]{3,50}@(gmail|yahoo).com$/),
   password: Joi.string().pattern(
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
   ),
-  role: Joi.string().valid("admin", "user"),
+  rePassword: Joi.valid(Joi.ref("password")), 
+  DOB: Joi.string().pattern(/^\d{4}-\d{1,2}-\d{1,2}$/).trim(),
+  role: Joi.string().pattern(/^(admin|user)$/),
+  city: Joi.string().min(2).max(30).trim(),
   profileImg: Joi.object({
     fieldname: Joi.string().required(),
     originalname: Joi.string().required(),
