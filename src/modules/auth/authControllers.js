@@ -65,12 +65,12 @@ const signup = catchError(async (req, res, next) => {
     DOB: req.body.DOB,
     city: req.body.city,
     profileImg: `https://kemet-gp2024.onrender.com/${profile}`,
-  })
+  },{new: true})
   let token = Jwt.sign(
     { userId: user._id, role: user.role },
     process.env.JWT_KEY
   );
-  res.json({ msg: "success", token });
+  res.json({ msg: "success", token , user});
 });
 
 const signin = catchError(async (req, res, next) => {
@@ -81,7 +81,7 @@ const signin = catchError(async (req, res, next) => {
       process.env.JWT_KEY
     );
 
-    return res.json({ msg: "success", token , role: user.role});
+    return res.json({ msg: "success", token , role: user.role , userName: user.firstName + user.lastName , userProfile: user.profileImg});
   }
   next(new apiError("email or password incorrect", 401));
 });
