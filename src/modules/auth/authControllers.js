@@ -150,19 +150,34 @@ const userProfile = catchError(async (req, res, next) => {
 });
 
 const updateUserProfie = catchError(async (req, res, next) => {
-  if (req.file) req.body.profileImg = `https://kemet-gp2024.onrender.com/${req.file.filename}`;
-  let user = await userModel.findOneAndUpdate({ _id: req.user._id },{
+  if(req.file){
+    cloudinary.uploader.upload(req.file.path,async(error,result)=>{
+    let user = await userModel.findOneAndUpdate({ _id: req.user._id },{
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     DOB: req.body.DOB,
     city: req.body.city,
-    profileImg: req.body.profileImg,
+    profileImg: result.secure_url,
   }, {
     new: true,
   });
 
   !user && next(new apiError("not user found", 404));
   user && res.json({ msg: "success", user });
+    })
+  }else{
+  let user = await userModel.findOneAndUpdate({ _id: req.user._id },{
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    DOB: req.body.DOB,
+    city: req.body.city,
+  }, {
+    new: true,
+  });
+
+  !user && next(new apiError("not user found", 404));
+  user && res.json({ msg: "success", user });
+  }
 });
 
 
