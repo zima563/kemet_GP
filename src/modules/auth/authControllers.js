@@ -1,10 +1,17 @@
 import bcrypt from "bcrypt";
 import Jwt from "jsonwebtoken";
+import { v2 as cloudinary } from "cloudinary";
 
 import { catchError } from "../../middlewares/catchError.js";
 import { apiError } from "../../utils/apiError.js";
 import { sendEmailPcode } from "../../services/email/sendEmailPinCode.js";
 import { userModel } from "../../../databases/models/user.model.js";
+
+cloudinary.config({
+  cloud_name: "dnrfbxmc3",
+  api_key: "761547345853599",
+  api_secret: "ygNBoAdLImnpdDE7EnecgqTyTM0",
+});
 
 const verifyEmail = catchError(async (req, res, next) => {
   let user = new userModel();
@@ -56,21 +63,28 @@ const setingPassword = catchError(async (req, res, next) => {
 });
 
 const signup = catchError(async (req, res, next) => {
-  if (req.file) req.body.profileImg = req.file.filename;
-  let profile = req.body.profileImg?req.body.profileImg:"defaultAvatar.png";
+  
+  let filePath;
+  if(req.file){
+    filePath=req.file.path;
+  }else{
+    filePath="https://kemet-gp2024.onrender.com/defaultAvatar.png";
+  }
 
-  let user = await userModel.findOneAndUpdate({_id: req.user._id},{
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    DOB: req.body.DOB,
-    city: req.body.city,
-    profileImg: `https://kemet-gp2024.onrender.com/${profile}`,
-  },{new: true})
-  let token = Jwt.sign(
-    { userId: user._id, role: user.role },
-    process.env.JWT_KEY
-  );
-  res.json({ msg: "success", token , user});
+  cloudinary.uploader.upload(filePath, async(error,result)=>{
+    let user = await userModel.findOneAndUpdate({_id: req.user._id},{ 
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      DOB: req.body.DOB,
+      city: req.body.city,
+      profileImg: result.secure_url,
+    },{new: true})
+    let token = Jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_KEY
+    );
+    res.json({ msg: "success", token , user});
+  })
 });
 
 const signin = catchError(async (req, res, next) => {

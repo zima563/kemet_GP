@@ -2,7 +2,6 @@ import slugify from "slugify";
 import { catchError } from "../../middlewares/catchError.js";
 import { apiError } from "../../utils/apiError.js";
 import { ApiFeatures } from "../../utils/apiFeatures.js";
-import { reviewModel } from "../../../databases/models/review.model.js";
 
 export const deleteOne = (model) => {
   return catchError(async (req, res, next) => {

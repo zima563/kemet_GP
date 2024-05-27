@@ -4,12 +4,12 @@ import { apiError } from "../../utils/apiError.js";
 
 const fileUpload = () => {
   const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, "uploads/");
-    },
-    filename: (req, file, cb) => {
-      cb(null, uuidv4() + "-" + file.originalname);
-    },
+    // destination: (req, file, cb) => {
+    //   cb(null, "uploads/");
+    // },
+    // filename: (req, file, cb) => {
+    //   cb(null, uuidv4() + "-" + file.originalname);
+    // },
   });
 
   const fileFilter = (req, file, cb) => {
