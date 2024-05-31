@@ -1,6 +1,13 @@
 import nodemailer from "nodemailer";
+import fs from "fs";
+
+let emailTemplate = fs.readFileSync('template.html', 'utf8');
 
 export const sendEmailPcode = async (email, pinCode) => {
+  // Replace placeholders with actual values
+emailTemplate = emailTemplate.replace('{{userName}}', email);
+emailTemplate = emailTemplate.replace('{{pincode}}', pinCode);
+
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -11,10 +18,10 @@ export const sendEmailPcode = async (email, pinCode) => {
   });
 
   const info = await transporter.sendMail({
-    from: `"mohamedabdelazim" <${process.env.EMAIL_NAME}>`, // sender address
+    from: `"Kemet App" <${process.env.EMAIL_NAME}>`, // sender address
     to: email,
-    subject: "PIN CODE forgetting password", // list of receivers// Subject line
-    html: `<b>${pinCode}</b>`, // html body
+    subject: "Welcome to Kemet App, PIN CODE forgetting password", // list of receivers// Subject line
+    html: emailTemplate, // html body
   });
 
   console.log("Message sent: %s", info.messageId);
