@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import rateLimit from "express-rate-limit"
 import hpp from "hpp";
 import cors from "cors"
+import schedule from "node-schedule";
 
 dotenv.config();
 import { dbConnection } from "./databases/dbConnection.js";
@@ -19,6 +20,10 @@ const app = express();
 const port = 3000;
 
 dbConnection();
+
+const job = schedule.scheduleJob('* * * * *', function(){
+  console.log('welcome to kemet app!');
+});
 
 app.use(cors());
 app.options("*",cors())
