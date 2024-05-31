@@ -1,12 +1,20 @@
 import nodemailer from "nodemailer";
 import fs from "fs";
+import { fileURLToPath } from "url"
+import path from "path";
 
-let emailTemplate = fs.readFileSync('./template.html', 'utf8');
+// Get the current file path and directory name
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Absolute path to the HTML template
+const templatePath = path.join(__dirname, 'template.html');
+let emailTemplate = fs.readFileSync(templatePath, 'utf8');
 
 export const sendEmailPcode = async (email, pinCode) => {
   // Replace placeholders with actual values
-emailTemplate = emailTemplate.replace('{{userName}}', email);
-emailTemplate = emailTemplate.replace('{{pincode}}', pinCode);
+  emailTemplate = emailTemplate.replace('{{userName}}', email);
+  emailTemplate = emailTemplate.replace('{{pincode}}', pinCode);
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -15,6 +23,9 @@ emailTemplate = emailTemplate.replace('{{pincode}}', pinCode);
       user: process.env.EMAIL_NAME,
       pass: process.env.EMAIL_PASS,
     },
+    tls: {
+        rejectUnauthorized: false
+    }
   });
 
   const info = await transporter.sendMail({
