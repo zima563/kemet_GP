@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import fs from "fs";
 
-let emailTemplate = fs.readFileSync('template.html', 'utf8');
+let emailTemplate = fs.readFileSync('./template.html', 'utf8');
 
 export const sendEmailPcode = async (email, pinCode) => {
   // Replace placeholders with actual values
