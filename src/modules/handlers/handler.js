@@ -1,7 +1,15 @@
 import slugify from "slugify";
+import { v2 as cloudinary } from "cloudinary"
+
 import { catchError } from "../../middlewares/catchError.js";
 import { apiError } from "../../utils/apiError.js";
 import { ApiFeatures } from "../../utils/apiFeatures.js";
+
+cloudinary.config({
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
+});
 
 export const deleteOne = (model) => {
   return catchError(async (req, res, next) => {
@@ -15,13 +23,27 @@ export const updateOne = (model) => {
   return catchError(async (req, res, next) => {
     if (req.body.title) req.body.slug = slugify(req.body.title);
     if (req.body.name) req.body.slug = slugify(req.body.name);
-    if (req.file) req.body.image = req.file.filename;
-    if (req.files?.imgCover) {
-      req.body.imgCover = req.files.imgCover[0].filename;
-    }
-    if (req.files?.images) {
-      req.body.images = req.files.images.map((val) => val.filename);
-    }
+   // Upload single image file to Cloudinary
+   if (req.file) {
+    const result = await cloudinary.uploader.upload(req.file.path);
+    req.body.image = result.secure_url; // Save the Cloudinary URL
+  }
+
+  // Upload cover image to Cloudinary if provided
+  if (req.files?.imgCover) {
+    const coverResult = await cloudinary.uploader.upload(req.files.imgCover[0].path);
+    req.body.imgCover = coverResult.secure_url; // Save the Cloudinary URL
+  }
+
+  // Upload multiple images to Cloudinary if provided
+  if (req.files?.images) {
+    const imageUploadPromises = req.files.images.map((file) =>
+      cloudinary.uploader.upload(file.path)
+    );
+    const imageResults = await Promise.all(imageUploadPromises);
+    req.body.images = imageResults.map((result) => result.secure_url); // Save the Cloudinary URLs
+  }
+
 
     let document = await model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -36,10 +58,27 @@ export const addOne = (model) => {
   return catchError(async (req, res, next) => {
     if (req.body.title) req.body.slug = slugify(req.body.title);
     if (req.body.name) req.body.slug = slugify(req.body.name);
-    if (req.file) req.body.image = req.file.filename;
-    if (req.files?.imgCover) req.body.imgCover = req.files.imgCover[0].filename;
-    if (req.files?.images)
-      req.body.images = req.files.images.map((val) => val.filename);
+  
+    // Upload single image file to Cloudinary
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      req.body.image = result.secure_url; // Save the Cloudinary URL
+    }
+
+    // Upload cover image to Cloudinary if provided
+    if (req.files?.imgCover) {
+      const coverResult = await cloudinary.uploader.upload(req.files.imgCover[0].path);
+      req.body.imgCover = coverResult.secure_url; // Save the Cloudinary URL
+    }
+
+    // Upload multiple images to Cloudinary if provided
+    if (req.files?.images) {
+      const imageUploadPromises = req.files.images.map((file) =>
+        cloudinary.uploader.upload(file.path)
+      );
+      const imageResults = await Promise.all(imageUploadPromises);
+      req.body.images = imageResults.map((result) => result.secure_url); // Save the Cloudinary URLs
+    }
     let document = new model(req.body);
     await document.save();
     res.json({ msg: "success", document });

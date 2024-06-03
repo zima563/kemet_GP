@@ -28,11 +28,11 @@ governrateRouter
     validation(addGovernrateVal),
     addGovernrate
   )
-  .get(getAllGovernrates);
+  .get(protectRoutes, allowedTo("admin", "user"), getAllGovernrates);
 
 governrateRouter
   .route("/:id")
-  .get(validation(paramsIdVal), getSingleGovernrate)
+  .get(protectRoutes, allowedTo("admin", "user"),validation(paramsIdVal), getSingleGovernrate)
   .put(
     protectRoutes,
     allowedTo("admin"),

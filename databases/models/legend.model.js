@@ -32,10 +32,5 @@ const schema = new mongoose.Schema(
   { timestamps: true }
 );
 
-schema.post("init", (doc) => {
-  if (doc.imgCover || doc.images) {
-    doc.imgCover = process.env.BASE_URL + doc.imgCover;
-    doc.images = doc.images?.map((val) => process.env.BASE_URL + val);
-  }
-});
+
 export const legendModel = mongoose.model("legend", schema);

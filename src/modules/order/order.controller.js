@@ -52,6 +52,10 @@ const getAllOrders = catchError(async (req, res, next) => {
     res.json({ msg: "success", orders });
   });
 
+const deleteOrder = catchError(async(req,res,next)=>{
+    await orderModel.findByIdAndDelete(req.params.id);
+    res.status(200).json({msg: "success"});
+})
 const createCheckOutSessions = async (req, res, next) => {
     let myTicket = await myTicketModel.findById(req.params.id);
     if(!myTicket) return next(new apiError("not myTicket found",404));
@@ -106,6 +110,7 @@ export{
     createCashOrder,
     getSpecificOrder,   
     getAllOrders,
+    deleteOrder,
     createCheckOutSessions,
     createOnlineOrder
 }

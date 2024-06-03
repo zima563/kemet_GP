@@ -27,11 +27,11 @@ tripRouter
     validation(addTripVal),
     addTrip
   )
-  .get(getTrips);
+  .get(protectRoutes, allowedTo("admin", "user"),getTrips);
 
 tripRouter
   .route("/:id")
-  .get(validation(paramsIdVal), getTrip)
+  .get(protectRoutes, allowedTo("admin", "user"),validation(paramsIdVal), getTrip)
   .put(
     protectRoutes,
     allowedTo("admin"),

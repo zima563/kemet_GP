@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 const templatePath = path.join(__dirname, 'template.html');
 let emailTemplate = fs.readFileSync(templatePath, 'utf8');
 
-export const sendEmailPcode = async (email, pinCode) => {
+export const sendEmailPcode = async (email, pinCode, subjectOfEmail) => {
   // Replace placeholders with actual values
   emailTemplate = emailTemplate.replace('{{userName}}', email);
   emailTemplate = emailTemplate.replace('{{pincode}}', pinCode);
@@ -31,7 +31,7 @@ export const sendEmailPcode = async (email, pinCode) => {
   const info = await transporter.sendMail({
     from: `"Kemet App" <${process.env.EMAIL_NAME}>`, // sender address
     to: email,
-    subject: "Welcome to Kemet App, PIN CODE forgetting password", // list of receivers// Subject line
+    subject: `PIN CODE > "${subjectOfEmail}"`, // list of receivers// Subject line
     html: emailTemplate, // html body
   });
 

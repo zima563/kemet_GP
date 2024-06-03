@@ -28,7 +28,7 @@ reviewRouter
     validation(addReviewVal),
     addReview
   )
-  .get(validation(paramsIdVal), getReview)
+  .get(protectRoutes, allowedTo("admin", "user"),validation(paramsIdVal), getReview)
   .put(
     protectRoutes,
     allowedTo("user"),

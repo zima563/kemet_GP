@@ -8,14 +8,14 @@ import { sendEmailPcode } from "../../services/email/sendEmailPinCode.js";
 import { userModel } from "../../../databases/models/user.model.js";
 
 cloudinary.config({
-  cloud_name: "dnrfbxmc3",
-  api_key: "761547345853599",
-  api_secret: "ygNBoAdLImnpdDE7EnecgqTyTM0",
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
 });
 
 const verifyEmail = catchError(async (req, res, next) => {
   let user = new userModel();
-  user.email=req.body.email;
+  user.email = req.body.email;
   const pinCode = Math.floor(100000 + Math.random() * 900000).toString();
   const pinCodeExpire = new Date();
   pinCodeExpire.setMinutes(pinCodeExpire.getMinutes() + 10);
@@ -24,67 +24,64 @@ const verifyEmail = catchError(async (req, res, next) => {
   user.confirmEmail = false;
 
   await user.save();
-  let token = Jwt.sign(
-        { userId:user._id },
-        process.env.JWT_KEY
-      );
-  sendEmailPcode(user.email, user.pinCode);
+  let token = Jwt.sign({ userId: user._id }, process.env.JWT_KEY);
+  let subjectOfEmail = "Confirming Email";
+  sendEmailPcode(user.email, user.pinCode, subjectOfEmail);
 
-  res.json({ msg: "send of message successfully",token });
+  res.json({ msg: "send of message successfully", token });
 });
 
 const checkConformingEmail = catchError(async (req, res, next) => {
-  let user = await userModel.findById(req.user._id)
+  let user = await userModel.findById(req.user._id);
   if (user.pinCode !== req.body.pinCode || new Date() > user.pinCodeExpire)
-        return next(new apiError("Invalid or expired PinCode", 401));
+    return next(new apiError("Invalid or expired PinCode", 401));
 
-    user.pinCode = undefined;
-    user.pinCodeExpire = undefined;
-    user.confirmEmail = true;
-    await user.save();
-    res.json({ msg: "verification of pinCode is successfully" });
-
+  user.pinCode = undefined;
+  user.pinCodeExpire = undefined;
+  user.confirmEmail = true;
+  await user.save();
+  res.json({ msg: "verification of pinCode is successfully" });
 });
 
 const setingPassword = catchError(async (req, res, next) => {
-  let user = await userModel.findOne({_id:req.user._id,confirmEmail:true});
+  let user = await userModel.findOne({ _id: req.user._id, confirmEmail: true });
   if (!user) return next(new apiError("user not found", 404));
-  
+
   user.password = req.body.password;
-  
-  user.profileImg = `https://kemet-gp2024.onrender.com/${user.profileImg}` ;
+
+  user.profileImg = `https://kemet-gp2024.onrender.com/${user.profileImg}`;
   await user.save();
-  let token = Jwt.sign(
-    { userId: user._id },
-    process.env.JWT_KEY
-  );
+  let token = Jwt.sign({ userId: user._id }, process.env.JWT_KEY);
 
   res.status(200).json({ msg: "reset password is success ", token });
 });
 
 const signup = catchError(async (req, res, next) => {
-  
   let filePath;
-  if(req.file){
-    filePath=req.file.path;
-  }else{
-    filePath="https://kemet-gp2024.onrender.com/defaultAvatar.png";
+  if (req.file) {
+    filePath = req.file.path;
+  } else {
+    filePath = "https://kemet-gp2024.onrender.com/defaultAvatar.png";
   }
 
-  cloudinary.uploader.upload(filePath, async(error,result)=>{
-    let user = await userModel.findOneAndUpdate({_id: req.user._id},{ 
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      DOB: req.body.DOB,
-      city: req.body.city,
-      profileImg: result.secure_url,
-    },{new: true})
+  cloudinary.uploader.upload(filePath, async (error, result) => {
+    let user = await userModel.findOneAndUpdate(
+      { _id: req.user._id },
+      {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        DOB: req.body.DOB,
+        city: req.body.city,
+        profileImg: result.secure_url,
+      },
+      { new: true }
+    );
     let token = Jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_KEY
     );
-    res.json({ msg: "success", token , user});
-  })
+    res.json({ msg: "success", token, user });
+  });
 });
 
 const signin = catchError(async (req, res, next) => {
@@ -95,7 +92,13 @@ const signin = catchError(async (req, res, next) => {
       process.env.JWT_KEY
     );
 
-    return res.json({ msg: "success", token , role: user.role , userName: user.firstName + user.lastName , userProfile: user.profileImg});
+    return res.json({
+      msg: "success",
+      token,
+      role: user.role,
+      userName: user.firstName + user.lastName,
+      userProfile: user.profileImg,
+    });
   }
   next(new apiError("email or password incorrect", 401));
 });
@@ -111,28 +114,28 @@ const forgettingPassword = catchError(async (req, res, next) => {
   user.resetVerified = false;
 
   await user.save();
-  let token = Jwt.sign(
-    { userId:user._id },
-    process.env.JWT_KEY
-  );
-  sendEmailPcode(user.email, user.pinCode);
+  let token = Jwt.sign({ userId: user._id }, process.env.JWT_KEY);
+  let subjectOfEmail = "Forgetting Password";
+  sendEmailPcode(user.email, user.pinCode, subjectOfEmail);
 
-  res.json({ msg: "send of message successfully",token });
+  res.json({ msg: "send of message successfully", token });
 });
 
 const checkpinCode = catchError(async (req, res, next) => {
   let user = await userModel.findById(req.user._id);
   if (user.pinCode !== req.body.pinCode || new Date() > user.pinCodeExpire)
-        return next(new apiError("Invalid or expired PinCode", 401));
-    user.pinCode = undefined;
-    user.resetVerified = true;
-    await user.save();
-    res.json({ msg: "verification of pinCode is successfully" });
-  
+    return next(new apiError("Invalid or expired PinCode", 401));
+  user.pinCode = undefined;
+  user.resetVerified = true;
+  await user.save();
+  res.json({ msg: "verification of pinCode is successfully" });
 });
 
 const resetPassword = catchError(async (req, res, next) => {
-  let user = await userModel.findOne({_id:req.user._id,resetVerified:true});
+  let user = await userModel.findOne({
+    _id: req.user._id,
+    resetVerified: true,
+  });
 
   user.password = req.body.newPassword;
   await user.save();
@@ -150,36 +153,43 @@ const userProfile = catchError(async (req, res, next) => {
 });
 
 const updateUserProfie = catchError(async (req, res, next) => {
-  if(req.file){
-    cloudinary.uploader.upload(req.file.path,async(error,result)=>{
-    let user = await userModel.findOneAndUpdate({ _id: req.user._id },{
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    DOB: req.body.DOB,
-    city: req.body.city,
-    profileImg: result.secure_url,
-  }, {
-    new: true,
-  });
+  if (req.file) {
+    cloudinary.uploader.upload(req.file.path, async (error, result) => {
+      let user = await userModel.findOneAndUpdate(
+        { _id: req.user._id },
+        {
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          DOB: req.body.DOB,
+          city: req.body.city,
+          profileImg: result.secure_url,
+        },
+        {
+          new: true,
+        }
+      );
 
-  !user && next(new apiError("not user found", 404));
-  user && res.json({ msg: "success", user });
-    })
-  }else{
-  let user = await userModel.findOneAndUpdate({ _id: req.user._id },{
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    DOB: req.body.DOB,
-    city: req.body.city,
-  }, {
-    new: true,
-  });
+      !user && next(new apiError("not user found", 404));
+      user && res.json({ msg: "success", user });
+    });
+  } else {
+    let user = await userModel.findOneAndUpdate(
+      { _id: req.user._id },
+      {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        DOB: req.body.DOB,
+        city: req.body.city,
+      },
+      {
+        new: true,
+      }
+    );
 
-  !user && next(new apiError("not user found", 404));
-  user && res.json({ msg: "success", user });
+    !user && next(new apiError("not user found", 404));
+    user && res.json({ msg: "success", user });
   }
 });
-
 
 const changePassword = catchError(async (req, res, next) => {
   let user = await userModel.findById(req.user._id);

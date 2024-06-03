@@ -26,11 +26,11 @@ legendRouter
     validation(addLegendVal),
     addLegend
   )
-  .get(getAllLegends);
+  .get(protectRoutes, allowedTo("admin", "user"),getAllLegends);
 
 legendRouter
   .route("/:id")
-  .get(validation(paramsIdVal), getSingleLegend)
+  .get(protectRoutes, allowedTo("admin", "user"),validation(paramsIdVal), getSingleLegend)
   .put(
     protectRoutes,
     allowedTo("admin"),

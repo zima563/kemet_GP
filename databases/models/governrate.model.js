@@ -20,7 +20,5 @@ const schema = new mongoose.Schema(
   { timestamps: true }
 );
 
-schema.post("init", (doc) => {
-  if (doc.image) doc.image = process.env.BASE_URL + doc.image;
-});
+
 export const governrateModel = mongoose.model("governrate", schema);
