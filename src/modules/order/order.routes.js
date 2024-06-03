@@ -12,7 +12,7 @@ orderRouter.route("/getSpecificOrder").get(protectRoutes,allowedTo("user"),getSp
 
 orderRouter.route("/getAllOrders").get(protectRoutes,allowedTo("admin"),getAllOrders)
 
-orderRouter.route("/deleteOrder").delete(protectRoutes,allowedTo("admin"),deleteOrder);
+orderRouter.route("/deleteOrder/:id").delete(protectRoutes,allowedTo("admin"),deleteOrder);
 
 orderRouter
   .route("/checkOut/:id")
