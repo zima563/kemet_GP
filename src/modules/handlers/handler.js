@@ -5,10 +5,11 @@ import { catchError } from "../../middlewares/catchError.js";
 import { apiError } from "../../utils/apiError.js";
 import { ApiFeatures } from "../../utils/apiFeatures.js";
 
+// Configure Cloudinary with environment variables
 cloudinary.config({
-  cloud_name: process.env.cloud_name,
-  api_key: process.env.api_key,
-  api_secret: process.env.api_secret,
+  cloud_name: "dnrfbxmc3",
+  api_key: "518374656112347",
+  api_secret: "_zgNFNuYi5CfkrW53NQ059sh-KA",
 });
 
 export const deleteOne = (model) => {

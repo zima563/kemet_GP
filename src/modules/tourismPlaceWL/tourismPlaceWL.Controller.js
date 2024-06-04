@@ -10,7 +10,6 @@ const addToTPWishList =  catchError(async (req, res, next) => {
         { new: true }
       )
       .populate("wishListTourismPlace");
-      console.log(wishList);
     !wishList && next(new apiError({ msq: "not document found" }, 404));
     wishList && res.json({ msg: "success", wishList: wishList.wishListTourismPlace });
   });
