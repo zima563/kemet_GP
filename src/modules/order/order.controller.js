@@ -35,7 +35,7 @@ const createCashOrder = catchError(async(req,res,next)=>{
     })
 
     await tripModel.bulkWrite(options);
-    await sendEmailOrderConfirm(user.email,user.firstName+user.lastName,order.orderCode)
+    await sendEmailOrderConfirm(req.user.email,req.user.firstName+req.user.lastName,order.orderCode)
     await myTicketModel.findByIdAndDelete(req.params.id);
 
     res.status(200).json({msg: "success", order})
