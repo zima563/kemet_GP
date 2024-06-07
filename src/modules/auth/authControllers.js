@@ -16,7 +16,8 @@ cloudinary.config({
 const verifyEmail = catchError(async (req, res, next) => {
   let user = new userModel();
   user.email = req.body.email;
-  pinCodeExpire.setMinutes(new Date().getMinutes() + 10);
+  const pinCodeExpire = new Date();
+  pinCodeExpire.setMinutes(pinCodeExpire.getMinutes() + 10);
   user.pinCode = Math.floor(100000 + Math.random() * 900000).toString();
   user.pinCodeExpire = pinCodeExpire;
   user.confirmEmail = false;
