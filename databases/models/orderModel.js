@@ -12,7 +12,7 @@ const schema = new mongoose.Schema(
       },
     ],
     totalOrderPrice: Number,
-    orderCode: string,
+    orderCode: String,
     shippingAddress: {
       street: String,
       city: String,
