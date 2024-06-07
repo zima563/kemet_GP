@@ -3,6 +3,7 @@ import { orderModel } from "../../../databases/models/orderModel.js";
 import { tripModel } from "../../../databases/models/trip.model.js";
 import { userModel } from "../../../databases/models/user.model.js";
 import { catchError } from "../../middlewares/catchError.js";
+import { sendEmailOrderConfirm } from "../../services/email/sendEmailConfirmingOrder.js";
 import { apiError } from "../../utils/apiError.js";
 import Stripe from "stripe";
 const stripe = new Stripe(
@@ -21,6 +22,7 @@ const createCashOrder = catchError(async(req,res,next)=>{
         totalOrderPrice,
         shippingAddress: req.body.shippingAddress,
     });
+    order.orderCode=Math.floor(1000 + Math.random() * 9000).toString();
     await order.save();
     
     let options = myTicket.myTicketItems.map((prod)=>{
@@ -125,6 +127,7 @@ async function card(e,res){
     orderItems: myTicket.myTicketItems,
     totalOrderPrice: e.amount_total/100 ,
     shippingAddress: e.metadata.shippingAddress,
+    orderCode: Math.floor(1000 + Math.random() * 9000).toString(),
     paymentType: "card",
     isPaid: true,
     paidAt: Date.now(),
@@ -143,7 +146,7 @@ async function card(e,res){
   });
 
   await tripModel.bulkWrite(options);
-
+  sendEmailOrderConfirm(user.email,user.firstName+user.lastName,order.orderCode)
   await myTicketModel.findOneAndDelete({user:user._id});
 
   res.json({ msg: "success", order });

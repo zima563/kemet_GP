@@ -8,9 +8,9 @@ import { sendEmailPcode } from "../../services/email/sendEmailPinCode.js";
 import { userModel } from "../../../databases/models/user.model.js";
 
 cloudinary.config({
-  cloud_name: process.env.cloud_name,
-  api_key: process.env.api_key,
-  api_secret: process.env.api_secret,
+  cloud_name: "dnrfbxmc3",
+  api_key: "518374656112347",
+  api_secret: "_zgNFNuYi5CfkrW53NQ059sh-KA",
 });
 
 const verifyEmail = catchError(async (req, res, next) => {
@@ -224,6 +224,10 @@ const protectRoutes = catchError(async (req, res, next) => {
   let decoded = Jwt.verify(token, process.env.JWT_KEY);
   let user = await userModel.findById(decoded.userId);
   if (!user) return next(new apiError("user not found"));
+
+  if (!user.isBlocked) {
+    return next(new apiError("you account is blocked", 403));
+  }
 
   if (user.passwordChangedAt) {
     let timeOfChangePassword = parseInt(user?.passwordChangedAt / 1000);

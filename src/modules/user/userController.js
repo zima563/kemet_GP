@@ -55,39 +55,14 @@ const getUser = catchError(async (req, res, next) => {
 });
 
 const updateUser = catchError(async (req, res, next) => {
-  if(req.file){
-    cloudinary.uploader.upload(req.file.path,async(error,result)=>{
-    let user = await userModel.findOneAndUpdate({ _id: req.user._id },{
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    DOB: req.body.DOB,
-    city: req.body.city,
-    profileImg: result.secure_url,
-    password: req.body.password,
-  }, {
-    new: true,
-  });
-
+  let user = await userModel.findByIdAndUpdate(req.params.id,{
+    role: req.body.role,
+    isBlocked: req.body.isBlocked,
+  })
   !user && next(new apiError("not user found", 404));
-  user && res.json({ msg: "success", user });
-    })
-  }else{
-  let user = await userModel.findOneAndUpdate({ _id: req.user._id },{
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    DOB: req.body.DOB,
-    city: req.body.city,
-    password: req.body.password,
-  }, {
-    new: true,
-  });
-
-  !user && next(new apiError("not user found", 404));
-  user && res.json({ msg: "success", user });
+  user && res.json({ msg: "success" });
   }
-});
+);
 
 const deleteUser = deleteOne(userModel);
 
