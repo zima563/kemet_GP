@@ -100,6 +100,8 @@ const signin = catchError(async (req, res, next) => {
       userName: user.firstName + user.lastName,
       userProfile: user.profileImg,
     });
+  } else if (user.isBlocked) {
+    return next(new apiError("you account is blocked", 403));
   }
   next(new apiError("email or password incorrect", 401));
 });
