@@ -1,20 +1,7 @@
 import nodemailer from "nodemailer";
-import fs from "fs";
-import { fileURLToPath } from "url"
-import path from "path";
+import { generateEmailTemplatePinCode } from "./emailTemplate.js";
 
-// Get the current file path and directory name
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Absolute path to the HTML template
-const templatePath = path.join(__dirname, 'template.html');
-let emailTemplate = fs.readFileSync(templatePath, 'utf8');
-
-export const sendEmailPcode = async (email, pinCode, subjectOfEmail) => {
-  // Replace placeholders with actual values
-  emailTemplate = emailTemplate.replace('{{userName}}', email);
-  emailTemplate = emailTemplate.replace('{{pincode}}', pinCode);
+export const sendEmailPcode = async (userEmail, pinCode, subjectOfEmail) => {
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -30,9 +17,9 @@ export const sendEmailPcode = async (email, pinCode, subjectOfEmail) => {
 
   const info = await transporter.sendMail({
     from: `"Kemet App" <${process.env.EMAIL_NAME}>`, // sender address
-    to: email,
+    to: userEmail,
     subject: `PIN CODE > "${subjectOfEmail}"`, // list of receivers// Subject line
-    html: emailTemplate, // html body
+    html: generateEmailTemplatePinCode(userEmail, pinCode), // html body
   });
 
   console.log("Message sent: %s", info.messageId);

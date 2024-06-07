@@ -16,7 +16,7 @@ cloudinary.config({
 const verifyEmail = catchError(async (req, res, next) => {
   let user = new userModel();
   user.email = req.body.email;
-  const pinCodeExpire = new Date();
+  let pinCodeExpire = new Date();
   pinCodeExpire.setMinutes(pinCodeExpire.getMinutes() + 10);
   user.pinCode = Math.floor(100000 + Math.random() * 900000).toString();
   user.pinCodeExpire = pinCodeExpire;
@@ -25,7 +25,9 @@ const verifyEmail = catchError(async (req, res, next) => {
   await user.save();
   let token = Jwt.sign({ userId: user._id }, process.env.JWT_KEY);
   let subjectOfEmail = "Confirming Email";
-  sendEmailPcode(user.email, user.pinCode, subjectOfEmail);
+  let userPinCode = user.pinCode;
+  console.log(userPinCode);
+  await sendEmailPcode(user.email, userPinCode, subjectOfEmail);
 
   res.json({ msg: "send of message successfully", token });
 });
@@ -224,7 +226,7 @@ const protectRoutes = catchError(async (req, res, next) => {
   let user = await userModel.findById(decoded.userId);
   if (!user) return next(new apiError("user not found"));
 
-  if (!user.isBlocked) {
+  if (user.isBlocked) {
     return next(new apiError("you account is blocked", 403));
   }
 
