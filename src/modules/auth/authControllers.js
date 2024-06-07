@@ -87,7 +87,9 @@ const signup = catchError(async (req, res, next) => {
 
 const signin = catchError(async (req, res, next) => {
   let user = await userModel.findOne({ email: req.body.email });
-  if (user && bcrypt.compareSync(req.body.password, user.password)) {
+  if (user.isBlocked) {
+      return next(new apiError("you account is blocked", 403));
+  } else if (user && bcrypt.compareSync(req.body.password, user.password)) {
     let token = Jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_KEY
@@ -100,8 +102,6 @@ const signin = catchError(async (req, res, next) => {
       userName: user.firstName + user.lastName,
       userProfile: user.profileImg,
     });
-  } else if (user.isBlocked) {
-    return next(new apiError("you account is blocked", 403));
   }
   next(new apiError("email or password incorrect", 401));
 });
