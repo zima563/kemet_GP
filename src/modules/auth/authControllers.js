@@ -26,7 +26,6 @@ const verifyEmail = catchError(async (req, res, next) => {
   let token = Jwt.sign({ userId: user._id }, process.env.JWT_KEY);
   let subjectOfEmail = "Confirming Email";
   let userPinCode = user.pinCode;
-  console.log(userPinCode);
   await sendEmailPcode(user.email, userPinCode, subjectOfEmail);
 
   res.json({ msg: "send of message successfully", token });
