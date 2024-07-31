@@ -7,7 +7,7 @@
 // import { apiError } from "../../utils/apiError.js";
 
 // import paypal from "@paypal/checkout-server-sdk";
-// const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID } = process.env;
+const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID } = process.env;
 // import Stripe from "stripe";
 // const stripe = new Stripe(
 //   "sk_test_51OjO5wDJVgPX3w4UtWtwnxGjrFw2XBAByqmMldewZSiYUjLqp5IvjeD06mbPGUA2Ou9xlx0JqdRfzH8qtVrDzuJb00Zazas9tJ"
