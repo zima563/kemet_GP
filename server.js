@@ -32,7 +32,7 @@ app.options("*", cors());
 //   createOnlineOrder
 // );
 // إعداد PayPal SDK
-const environment = new paypal.core.SandboxEnvironment('your_client_id', 'your_client_secret');
+const environment = new paypal.core.SandboxEnvironment('AQ_N09kxaL3IryDbbvWTYaRcYjShpn2_HBsv2WZkEhzU0mNzLlUq4abv4mMq3N8mTCQtK_YT7p5IlPXv', 'EJEEkJqkiq56eqxeavnDA1PR10qlWilrvLsAn68tK9ZIU5QJ0CwJPkJpDhkL-tzkIZy5FXNpU4bC3Xhk');
 const client = new paypal.core.PayPalHttpClient(environment);
 
 // إنشاء طلب دفع
